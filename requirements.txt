@@ -1,0 +1,17 @@
+alembic
+asgiref
+asyncpg
+celery
+fastapi[standard]
+fastapi-mail
+flower
+httpx
+isort
+itsdangerous
+passlib
+psycopg2-binary
+pydantic-settings
+PyJWT
+redis
+ruff
+sqlmodel
