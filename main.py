@@ -1,5 +1,6 @@
 from typing import Optional
 from fastapi import FastAPI
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -30,3 +31,14 @@ async def greet(name: Optional[str] = "Nayeem", age: int = 0) -> dict:
         return {"Message": f"How are you {name}? ", "Age": f"You are {age} years old."}
     else:
         return {"Message": f"How are you {name}?"}
+    
+# User Model 
+class User(BaseModel):
+    name: str
+    age: int
+    city: str
+
+# POST Request Handling
+@app.post("/user")
+async def create_user(user: User) -> dict:
+    return {"Name": f"{user.name} ", "Age": f"{user.age} ", "City": f"{user.city} "}
