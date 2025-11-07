@@ -15,3 +15,4 @@ PyJWT
 redis
 ruff
 sqlmodel
+psycopg2

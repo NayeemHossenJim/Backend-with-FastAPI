@@ -1,13 +1,11 @@
+import time
+import psycopg2
 from typing import Optional
 from fastapi import FastAPI
 from pydantic import BaseModel
+from psycopg2.extras import RealDictCursor
 
 app = FastAPI()
-
-# Basic Root Endpoint
-@app.get("/")
-async def root():
-    return {"Message": "Hell Yeah!"}
 
 # Path Parameter Example
 @app.get("/path/{name}")
@@ -42,3 +40,21 @@ class User(BaseModel):
 @app.post("/user")
 async def create_user(user: User) -> dict:
     return {"User Data": user}
+
+# Database Connection with Retry Logic
+while True:
+    try :
+        connect = psycopg2.connect(host="localhost",database="postgres",user="postgres",password="1892",cursor_factory=RealDictCursor)
+        cursor = connect.cursor()
+        print("Database connection was successful!")
+        break 
+    except Exception as e:
+        print("Database connection failed!")
+        print("Error:", e)
+        time.sleep(2)
+
+@app.get("/")
+async def db_test():
+    cursor.execute("SELECT * FROM \"User\"")
+    Data = cursor.fetchall()
+    return {"Data": Data}
