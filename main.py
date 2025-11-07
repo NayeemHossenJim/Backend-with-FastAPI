@@ -85,3 +85,13 @@ async def delete_user(id: int):
     if deleted_user:
         return {"Deleted User": deleted_user}
     return Response(status_code=status.HTTP_404_NOT_FOUND)
+
+#Update user
+@app.put("/update_user/{id}")
+async def update_user(id: int, post: User):
+    cursor.execute("""UPDATE userdata SET name = %s, age = %s, city = %s WHERE id = %s RETURNING *""", (post.Name, str(post.Age), post.City, str(id)))
+    updated_user = cursor.fetchone()
+    connect.commit()
+    if updated_user:
+        return {"Updated User": updated_user}
+    return Response(status_code=status.HTTP_404_NOT_FOUND)
