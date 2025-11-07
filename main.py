@@ -34,11 +34,11 @@ async def greet(name: Optional[str] = "Nayeem", age: int = 0) -> dict:
     
 # User Model 
 class User(BaseModel):
-    name: str
-    age: int
-    city: str
+    Name: str
+    Age: int
+    City: str
 
 # POST Request Handling
 @app.post("/user")
 async def create_user(user: User) -> dict:
-    return {"Name": f"{user.name} ", "Age": f"{user.age} ", "City": f"{user.city} "}
+    return {"User Data": user}
