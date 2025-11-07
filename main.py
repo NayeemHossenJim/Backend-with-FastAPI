@@ -32,9 +32,9 @@ async def greet(name: Optional[str] = "Nayeem", age: int = 0) -> dict:
     
 # User Model 
 class User(BaseModel):
-    Name: str
-    Age: int
-    City: str
+    name: str
+    age: int
+    city: str
 
 # POST Request Handling
 @app.post("/user")
@@ -62,7 +62,7 @@ async def db_test():
 #Save data to database
 @app.post("/create_user")
 async def create_user(post: User):
-    cursor.execute("""INSERT INTO userdata(name, age, city) VALUES (%s, %s, %s) RETURNING *""", (post.Name, str(post.Age), post.City))
+    cursor.execute("""INSERT INTO userdata(name, age, city) VALUES (%s, %s, %s) RETURNING *""", (post.name, str(post.age), post.city))
     new_user = cursor.fetchone()
     connect.commit()
     return {"New User": new_user}
@@ -89,7 +89,7 @@ async def delete_user(id: int):
 #Update user
 @app.put("/update_user/{id}")
 async def update_user(id: int, post: User):
-    cursor.execute("""UPDATE userdata SET name = %s, age = %s, city = %s WHERE id = %s RETURNING *""", (post.Name, str(post.Age), post.City, str(id)))
+    cursor.execute("""UPDATE userdata SET name = %s, age = %s, city = %s WHERE id = %s RETURNING *""", (post.name, str(post.age), post.city, str(id)))
     updated_user = cursor.fetchone()
     connect.commit()
     if updated_user:
