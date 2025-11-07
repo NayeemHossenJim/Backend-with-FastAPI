@@ -1,9 +1,9 @@
 import time
 import psycopg2
 from typing import Optional
-from fastapi import FastAPI
 from pydantic import BaseModel
 from psycopg2.extras import RealDictCursor
+from fastapi import FastAPI, Response, status
 
 app = FastAPI()
 
@@ -74,4 +74,14 @@ async def fetch_user(id: int):
     user = cursor.fetchone()
     if user:
         return {"User": user}
-    return {"Message": "User not found"}
+    return Response(status_code=status.HTTP_404_NOT_FOUND)
+
+#Delete user
+@app.delete("/delete_user/{id}")
+async def delete_user(id: int):
+    cursor.execute("DELETE FROM userdata WHERE id = %s RETURNING *", (str(id),))
+    deleted_user = cursor.fetchone()
+    connect.commit()
+    if deleted_user:
+        return {"Deleted User": deleted_user}
+    return Response(status_code=status.HTTP_404_NOT_FOUND)
