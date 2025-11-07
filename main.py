@@ -55,6 +55,23 @@ while True:
 
 @app.get("/")
 async def db_test():
-    cursor.execute("SELECT * FROM \"User\"")
+    cursor.execute("SELECT * FROM userdata")
     Data = cursor.fetchall()
     return {"Data": Data}
+
+#Save data to database
+@app.post("/create_user")
+async def create_user(post: User):
+    cursor.execute("""INSERT INTO userdata(name, age, city) VALUES (%s, %s, %s) RETURNING *""", (post.Name, str(post.Age), post.City))
+    new_user = cursor.fetchone()
+    connect.commit()
+    return {"New User": new_user}
+
+#Fetch single user
+@app.get("/fetch_user/{id}")
+async def fetch_user(id: int):
+    cursor.execute("SELECT * FROM userdata WHERE id = %s", (str(id),))
+    user = cursor.fetchone()
+    if user:
+        return {"User": user}
+    return {"Message": "User not found"}
