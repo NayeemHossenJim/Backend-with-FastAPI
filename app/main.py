@@ -1,11 +1,15 @@
 import time
 import psycopg2
+from .  import model
 from typing import Optional
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
+from . database import engine, get_db
 from psycopg2.extras import RealDictCursor
-from fastapi import FastAPI, Response, status
+from fastapi import Depends, FastAPI, Response, status
 
 app = FastAPI()
+model.Base.metadata.create_all(bind=engine)
 
 # Path Parameter Example
 @app.get("/path/{name}")
@@ -95,3 +99,8 @@ async def update_user(id: int, post: User):
     if updated_user:
         return {"Updated User": updated_user}
     return Response(status_code=status.HTTP_404_NOT_FOUND)
+
+# SQLAlchemy Dependency Injection Example
+@app.get("/sqlalchemy")
+async def get_users(db: Session = Depends(get_db)):
+    return {"Users": "SQLAlchemy ORM."}
