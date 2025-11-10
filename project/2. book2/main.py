@@ -27,7 +27,7 @@ async def create_book(book: BookRequest):
     BOOKS.append(book.model_dump())
     return book
 
-@app.get("/books/publish/")
+@app.get("/books/")
 async def get_books_by_publish_date(publish_date: int):
     for book in BOOKS:
         if book["publish_date"] == publish_date:
