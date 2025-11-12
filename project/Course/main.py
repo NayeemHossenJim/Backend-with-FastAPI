@@ -26,7 +26,7 @@ async def root(db: db_dependency):
     return db.query(model.Course).all()
 
 # Endpoint to create a new course
-@app.post("/courses")
+@app.post("/create_courses")
 async def create_course(course: CourseRequest, db: db_dependency):
     new_course = model.Course(
         name=course.name,
