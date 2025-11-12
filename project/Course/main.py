@@ -1,20 +1,12 @@
 # Essential imports
 import model
 from typing import Annotated
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from database import engine, get_db
 from fastapi import Depends, FastAPI
 
 # Initialize FastAPI app
 app = FastAPI()
-
-# Pydantic model for course creation requests
-class CourseRequest(BaseModel):
-    name: str
-    description: str
-    credits: int
-    hours_per_week: int
 
 # Create database tables with dependencies
 model.Base.metadata.create_all(bind=engine)
@@ -27,7 +19,7 @@ async def root(db: db_dependency):
 
 # Endpoint to create a new course
 @app.post("/create_courses")
-async def create_course(course: CourseRequest, db: db_dependency):
+async def create_course(course: model.CourseRequest, db: db_dependency):
     new_course = model.Course(
         name=course.name,
         description=course.description,
