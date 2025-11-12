@@ -52,3 +52,13 @@ async def update_task(task_id: int, updated_task: model.ToDoRequest, db: db_depe
     db.commit()
     db.refresh(Todo)
     return {"message": "Task updated successfully", "task": Todo}
+
+# Endpoint to delete a task
+@app.delete("/delete_task/{task_id}")
+async def delete_task(task_id: int, db: db_dependency):
+    Todo = db.query(model.ToDo).filter(model.ToDo.id == task_id).first()
+    if not Todo:
+        raise HTTPException(status_code=404, detail="Task not found")
+    db.delete(Todo)
+    db.commit()
+    return {"message": "Task deleted successfully"}
