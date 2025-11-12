@@ -3,7 +3,7 @@ import model
 from typing import Annotated
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from database import engine, SessionLocal
+from database import engine, get_db
 from fastapi import Depends, FastAPI, HTTPException
 
 app = FastAPI()
@@ -16,22 +16,23 @@ class CourseRequest(BaseModel):
 
 model.Base.metadata.create_all(bind=engine)
 
-#Securely manage database sessions
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 db_dependency = Annotated[Session, Depends(get_db)]
 
 @app.get("/")
 async def root(db: db_dependency):
-    return db.query(model.Todos).all()
+    return db.query(model.Course).all()
 
 @app.post("/courses")
-async def create_course(course: CourseRequest):
-    if course:
-        return {"message": "Course created successfully", "course": course}
-    return HTTPException(status_code=400, detail="Invalid course data")
+async def create_course(course: CourseRequest, db: db_dependency):
+    new_course = model.Course(
+        name=course.name,
+        description=course.description,
+        credits=course.credits,
+        hours_per_week=course.hours_per_week
+    )
+    if not new_course:
+        raise HTTPException(status_code=400, detail="Course name is required")
+    db.add(new_course)
+    db.commit()
+    db.refresh(new_course)
+    return {"message": "Course created successfully", "course": new_course}
