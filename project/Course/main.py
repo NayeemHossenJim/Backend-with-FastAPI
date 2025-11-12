@@ -30,8 +30,6 @@ async def create_course(course: CourseRequest, db: db_dependency):
         credits=course.credits,
         hours_per_week=course.hours_per_week
     )
-    if not new_course:
-        raise HTTPException(status_code=400, detail="Course name is required")
     db.add(new_course)
     db.commit()
     db.refresh(new_course)
