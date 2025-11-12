@@ -4,7 +4,7 @@ from typing import Annotated
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from database import engine, get_db
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI
 
 # Initialize FastAPI app
 app = FastAPI()
