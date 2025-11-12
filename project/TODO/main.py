@@ -15,18 +15,18 @@ db_dependency = Annotated[Session, Depends(get_db)]
 # Root endpoint to fetch all courses
 @app.get("/")
 async def root(db: db_dependency):
-    return db.query(model.Course).all()
+    return db.query(model.ToDo).all()
 
 # Endpoint to create a new course
-@app.post("/create_courses")
-async def create_course(course: model.CourseRequest, db: db_dependency):
-    new_course = model.Course(
-        name=course.name,
-        description=course.description,
-        credits=course.credits,
-        hours_per_week=course.hours_per_week
+@app.post("/create_task")
+async def create_task(task: model.ToDoRequest, db: db_dependency):
+    new_task = model.ToDo(
+        task=task.task,
+        description=task.description,
+        priority=task.priority,
+        status=task.status
     )
-    db.add(new_course)
+    db.add(new_task)
     db.commit()
-    db.refresh(new_course)
-    return {"message": "Course created successfully", "course": new_course}
+    db.refresh(new_task)
+    return {"message": "Task created successfully", "task": new_task}
