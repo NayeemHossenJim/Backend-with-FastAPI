@@ -3,7 +3,7 @@ from database import Base
 from pydantic import BaseModel
 from sqlalchemy import Boolean, Column, Integer, String
 
-# SQLAlchemy model for Course
+# SQLAlchemy model for tasks
 class ToDo(Base):
     __tablename__ = "Todo"
 
@@ -13,7 +13,7 @@ class ToDo(Base):
     priority = Column(Integer, nullable=False)
     status = Column(Boolean, default=False)
 
-# Pydantic model for course creation requests
+# Pydantic model for task creation requests
 class ToDoRequest(BaseModel):
     task: str
     description: str
