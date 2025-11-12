@@ -1,6 +1,8 @@
+# Essential imports
 from database import Base
 from sqlalchemy import Column, Integer, String
 
+# SQLAlchemy model for Course
 class Course(Base):
     __tablename__ = "courses"
 
