@@ -1,5 +1,5 @@
 # Essential imports
-import model
+import model, schema
 from typing import Annotated
 from sqlalchemy.orm import Session
 from database import engine, get_db
@@ -27,7 +27,7 @@ async def get_task(task_id: int, db: db_dependency):
 
 # Endpoint to create a new tasks
 @app.post("/create_task")
-async def create_task(task: model.ToDoRequest, db: db_dependency):
+async def create_task(task: schema.ToDoRequest, db: db_dependency):
     new_task = model.ToDo(
         task=task.task,
         description=task.description,
@@ -41,7 +41,7 @@ async def create_task(task: model.ToDoRequest, db: db_dependency):
 
 # Endpoint to update an existing task
 @app.put("/update_task/{task_id}")
-async def update_task(task_id: int, updated_task: model.ToDoRequest, db: db_dependency):
+async def update_task(task_id: int, updated_task: schema.ToDoRequest, db: db_dependency):
     Todo = db.query(model.ToDo).filter(model.ToDo.id == task_id).first()
     if not Todo:
         raise HTTPException(status_code=404, detail="Task not found")
