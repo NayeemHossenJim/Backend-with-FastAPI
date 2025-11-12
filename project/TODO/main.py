@@ -20,9 +20,9 @@ async def root(db: db_dependency):
 #Endpoint to check speicific task by id
 @app.get("/task/{task_id}")
 async def get_task(task_id: int, db: db_dependency):
-    task = db.query(model.ToDo).filter(model.ToDo.id == task_id).first()
-    if task:
-        return task
+    Todo = db.query(model.ToDo).filter(model.ToDo.id == task_id).first()
+    if Todo:
+        return Todo
     return HTTPException(status_code=404, detail="Task not found")
 
 # Endpoint to create a new tasks
@@ -38,3 +38,17 @@ async def create_task(task: model.ToDoRequest, db: db_dependency):
     db.commit()
     db.refresh(new_task)
     return {"message": "Task created successfully", "task": new_task}
+
+# Endpoint to update an existing task
+@app.put("/update_task/{task_id}")
+async def update_task(task_id: int, updated_task: model.ToDoRequest, db: db_dependency):
+    Todo = db.query(model.ToDo).filter(model.ToDo.id == task_id).first()
+    if not Todo:
+        raise HTTPException(status_code=404, detail="Task not found")
+    Todo.task = updated_task.task
+    Todo.description = updated_task.description
+    Todo.priority = updated_task.priority
+    Todo.status = updated_task.status
+    db.commit()
+    db.refresh(Todo)
+    return {"message": "Task updated successfully", "task": Todo}
