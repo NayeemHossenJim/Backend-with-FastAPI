@@ -62,3 +62,21 @@ async def delete_task(task_id: int, db: db_dependency):
     db.delete(Todo)
     db.commit()
     return {"message": "Task deleted successfully"}
+
+# Endpoint to create a new user
+@app.post("/create_user")
+async def create_user(user: schema.CreateUser, db: db_dependency):
+    new_user = model.User(
+        full_name=user.full_name,
+        username=user.username,
+        email=user.email,
+        password=user.password
+    )
+    if db.query(model.User).filter(model.User.username == user.username).first():
+        raise HTTPException(status_code=401, detail="Username already exists")
+    if db.query(model.User).filter(model.User.email == user.email).first():
+        raise HTTPException(status_code=401, detail="Email already exists")
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return {"message": "User created successfully", "user": new_user}

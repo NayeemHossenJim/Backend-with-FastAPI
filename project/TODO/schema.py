@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, Field
 
 # Pydantic model for task creation requests
 class ToDoRequest(BaseModel):
@@ -6,3 +6,10 @@ class ToDoRequest(BaseModel):
     description: str
     priority: int
     status: bool = False
+
+# Pydantic model for user creation requests
+class CreateUser(BaseModel):
+    full_name: str
+    username: str
+    email: EmailStr
+    password: str = Field(..., description="Password must be greater than 8 characters")
