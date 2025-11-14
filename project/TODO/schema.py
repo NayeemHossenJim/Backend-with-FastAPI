@@ -6,6 +6,7 @@ class ToDoRequest(BaseModel):
     description: str
     priority: int
     status: bool = False
+    owner_id: int
 
 # Pydantic model for user creation requests
 class CreateUser(BaseModel):

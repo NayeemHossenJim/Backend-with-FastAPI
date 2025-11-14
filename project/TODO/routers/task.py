@@ -31,7 +31,8 @@ async def create_task(task: schema.ToDoRequest, db: db_dependency):
         task=task.task,
         description=task.description,
         priority=task.priority,
-        status=task.status
+        status=task.status,
+        owner_id=task.owner_id
     )
     db.add(new_task)
     db.commit()
@@ -48,6 +49,7 @@ async def update_task(task_id: int, updated_task: schema.ToDoRequest, db: db_dep
     Todo.description = updated_task.description
     Todo.priority = updated_task.priority
     Todo.status = updated_task.status
+    Todo.owner_id = updated_task.owner_id
     db.commit()
     db.refresh(Todo)
     return {"message": "Task updated successfully", "task": Todo}

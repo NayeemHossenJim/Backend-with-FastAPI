@@ -1,6 +1,6 @@
 # Essential imports
 from database import Base
-from sqlalchemy import TIMESTAMP, Boolean, Column, Integer, String, text
+from sqlalchemy import TIMESTAMP, Boolean, Column, Integer, String, text, ForeignKey
 
 # SQLAlchemy model for tasks
 class ToDo(Base):
@@ -11,6 +11,7 @@ class ToDo(Base):
     description = Column(String, nullable=False)
     priority = Column(Integer, nullable=False)
     status = Column(Boolean, default=False)
+    owner_id = Column(Integer, ForeignKey("User.id"), nullable=False)
 
 # SQLAlchemy model for users
 class User(Base):
