@@ -1,5 +1,5 @@
 # Essential imports
-import model, schema
+import model, schema, utils
 from typing import Annotated
 from sqlalchemy.orm import Session
 from database import engine, get_db
@@ -66,6 +66,8 @@ async def delete_task(task_id: int, db: db_dependency):
 # Endpoint to create a new user
 @app.post("/create_user")
 async def create_user(user: schema.CreateUser, db: db_dependency):
+    hashed_password = utils.hash_password(user.password)
+    user.password = hashed_password
     new_user = model.User(
         full_name=user.full_name,
         username=user.username,
