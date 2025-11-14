@@ -6,11 +6,13 @@ from database import get_db
 from fastapi import Depends, HTTPException, APIRouter
 
 # Initialize APIRouter
-router = APIRouter()
+router = APIRouter(
+    prefix="/users"
+)
 db_dependency = Annotated[Session, Depends(get_db)]
 
 # Endpoint to create a new user
-@router.post("/create_user")
+@router.post("/")
 async def create_user(user: schema.CreateUser, db: db_dependency):
     hashed_password = utils.hash_password(user.password)
     user.password = hashed_password

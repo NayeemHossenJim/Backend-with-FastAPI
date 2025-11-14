@@ -6,7 +6,9 @@ from database import get_db
 from fastapi import Depends, HTTPException, APIRouter
 
 # Initialize APIRouter
-router = APIRouter()
+router = APIRouter(
+    prefix="/tasks"
+)
 db_dependency = Annotated[Session, Depends(get_db)]
 
 # Root endpoint to fetch all tasks
@@ -15,7 +17,7 @@ async def root(db: db_dependency):
     return db.query(model.ToDo).all()
 
 #Endpoint to check speicific task by id
-@router.get("/task/{task_id}")
+@router.get("/{task_id}")
 async def get_task(task_id: int, db: db_dependency):
     Todo = db.query(model.ToDo).filter(model.ToDo.id == task_id).first()
     if Todo:
@@ -23,7 +25,7 @@ async def get_task(task_id: int, db: db_dependency):
     return HTTPException(status_code=404, detail="Task not found")
 
 # Endpoint to create a new tasks
-@router.post("/create_task")
+@router.post("/")
 async def create_task(task: schema.ToDoRequest, db: db_dependency):
     new_task = model.ToDo(
         task=task.task,
@@ -37,7 +39,7 @@ async def create_task(task: schema.ToDoRequest, db: db_dependency):
     return {"message": "Task created successfully", "task": new_task}
 
 # Endpoint to update an existing task
-@router.put("/update_task/{task_id}")
+@router.put("/{task_id}")
 async def update_task(task_id: int, updated_task: schema.ToDoRequest, db: db_dependency):
     Todo = db.query(model.ToDo).filter(model.ToDo.id == task_id).first()
     if not Todo:
@@ -51,7 +53,7 @@ async def update_task(task_id: int, updated_task: schema.ToDoRequest, db: db_dep
     return {"message": "Task updated successfully", "task": Todo}
 
 # Endpoint to delete a task
-@router.delete("/delete_task/{task_id}")
+@router.delete("/{task_id}")
 async def delete_task(task_id: int, db: db_dependency):
     Todo = db.query(model.ToDo).filter(model.ToDo.id == task_id).first()
     if not Todo:
