@@ -1,8 +1,8 @@
 # Essential imports
 import model, schema
+from database import get_db
 from typing import Annotated
 from sqlalchemy.orm import Session
-from database import get_db
 from fastapi import Depends, HTTPException, APIRouter
 
 # Initialize APIRouter
