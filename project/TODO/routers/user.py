@@ -1,10 +1,19 @@
 # Essential imports
+import os
+from jose import jwt
 import model, schema, utils
-from typing import Annotated
-from sqlalchemy.orm import Session
 from database import get_db
+from typing import Annotated
+from dotenv import load_dotenv
+from sqlalchemy.orm import Session
+from datetime import datetime, timedelta, timezone
 from fastapi import Depends, HTTPException, APIRouter
 from fastapi.security import OAuth2PasswordRequestForm
+
+# Load environment variables
+load_dotenv()
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
 
 # Initialize APIRouter
 router = APIRouter(
@@ -20,6 +29,14 @@ async def Authenticate_user(username: str, password: str, db: db_dependency):
     if not utils.verify_password(password, user.password):
         return False
     return user
+
+# Create access token for authenticated user
+def create_access_token(username: str, user_id : int, expire_delta=timedelta):
+    encode = {"sub": username, "id": user_id}
+    expire = datetime.now(timezone.utc) + expire_delta
+    encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
 
 # Endpoint to create a new user
 @router.post("/")
@@ -47,4 +64,6 @@ async def login_for_access_token(from_data: Annotated[OAuth2PasswordRequestForm,
     user = await Authenticate_user(from_data.username, from_data.password, db)
     if not user:
         raise HTTPException(status_code=401, detail="Invalid Credentials")
-    return {"message": "Login successful"}
+    access_token_expires = timedelta(minutes=20)
+    access_token = create_access_token(user.username, user.id, access_token_expires)
+    return {"access_token": access_token, "token_type": "bearer"}
