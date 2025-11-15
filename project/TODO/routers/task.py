@@ -26,13 +26,13 @@ async def get_task(task_id: int, db: db_dependency):
 
 # Endpoint to create a new tasks
 @router.post("/")
-async def create_task(task: schema.ToDoRequest, db: db_dependency):
+async def create_task(new_task: schema.ToDoRequest, db: db_dependency):
     new_task = model.ToDo(
-        task=task.task,
-        description=task.description,
-        priority=task.priority,
-        status=task.status,
-        owner_id=task.owner_id
+        task=new_task.task,
+        description=new_task.description,
+        priority=new_task.priority,
+        status=new_task.status,
+        owner_id=new_task.owner_id
     )
     db.add(new_task)
     db.commit()
