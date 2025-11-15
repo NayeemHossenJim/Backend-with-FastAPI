@@ -1,14 +1,14 @@
 # Essential imports
 import os
-from jose import jwt
 import model, schema, utils
 from database import get_db
 from typing import Annotated
+from jose import JWTError, jwt
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta, timezone
 from fastapi import Depends, HTTPException, APIRouter
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 
 # Load environment variables
 load_dotenv()
@@ -20,6 +20,7 @@ router = APIRouter(
     prefix="/users"
 )
 db_dependency = Annotated[Session, Depends(get_db)]
+oauth2_bearer = OAuth2PasswordBearer(tokenUrl="token")
 
 # Function to authenticate user credentials
 async def Authenticate_user(username: str, password: str, db: db_dependency):
@@ -37,6 +38,17 @@ def create_access_token(username: str, user_id : int, expire_delta=timedelta):
     encode.update({"exp": expire})
     encoded_jwt = jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
+async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):  
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        user_id: int = payload.get("id")
+        if username is None or user_id is None:
+            raise HTTPException(status_code=401, detail="Could not validate credentials")
+        return {"username": username, "id": user_id}
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Could not validate credentials")
 
 # Endpoint to create a new user
 @router.post("/")
