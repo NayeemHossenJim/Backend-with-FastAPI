@@ -15,8 +15,10 @@ current_user_dependency = Annotated[dict, Depends(get_current_user)]
 
 # Root endpoint to fetch all tasks
 @router.get("/")
-async def root(db: db_dependency):
-    return db.query(model.ToDo).all()
+async def root(db: db_dependency, current_user: current_user_dependency):
+    if not current_user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    return db.query(model.ToDo).filter(model.ToDo.owner_id == current_user["id"]).all()
 
 #Endpoint to check speicific task by id
 @router.get("/{task_id}")
