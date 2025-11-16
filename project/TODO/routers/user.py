@@ -20,7 +20,7 @@ router = APIRouter(
     prefix="/users"
 )
 db_dependency = Annotated[Session, Depends(get_db)]
-oauth2_bearer = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_bearer = OAuth2PasswordBearer(tokenUrl="users/token")
 
 # Function to authenticate user credentials
 async def Authenticate_user(username: str, password: str, db: db_dependency):
