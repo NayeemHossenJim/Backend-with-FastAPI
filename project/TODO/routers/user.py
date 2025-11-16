@@ -33,8 +33,8 @@ async def Authenticate_user(username: str, password: str, db: db_dependency):
     return user
 
 # Create access token for authenticated user
-def create_access_token(username: str, user_id : int, expire_delta=timedelta):
-    encode = {"sub": username, "id": user_id}
+def create_access_token(username: str, user_id : int,role: str, expire_delta=timedelta):
+    encode = {"sub": username, "id": user_id, "role": role}
     expire = datetime.now(timezone.utc) + expire_delta
     encode.update({"exp": expire})
     encoded_jwt = jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
@@ -45,9 +45,10 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         user_id: int = payload.get("id")
+        role: str = payload.get("role")
         if username is None or user_id is None:
             raise HTTPException(status_code=401, detail="Could not validate credentials")
-        return {"username": username, "id": user_id}
+        return {"username": username, "id": user_id, "role": role}
     except JWTError:
         raise HTTPException(status_code=401, detail="Could not validate credentials")
 
@@ -66,6 +67,8 @@ async def create_user(user: schema.CreateUser, db: db_dependency):
         raise HTTPException(status_code=401, detail="Username already exists")
     if db.query(model.User).filter(model.User.email == user.email).first():
         raise HTTPException(status_code=401, detail="Email already exists")
+    if db.query(model.User).filter(model.User.password < 8).first():
+        raise HTTPException(status_code=401, detail="Password must be greater than 8 characters")
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -78,5 +81,5 @@ async def login_for_access_token(from_data: Annotated[OAuth2PasswordRequestForm,
     if not user:
         raise HTTPException(status_code=401, detail="Invalid Credentials")
     access_token_expires = timedelta(minutes=20)
-    access_token = create_access_token(user.username, user.id, access_token_expires)
+    access_token = create_access_token(user.username, user.id, user.role, access_token_expires)
     return {"access_token": access_token, "token_type": "bearer"}
