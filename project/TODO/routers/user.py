@@ -61,13 +61,14 @@ async def create_user(user: schema.CreateUser, db: db_dependency):
         full_name=user.full_name,
         username=user.username,
         email=user.email,
-        password=user.password
+        password=user.password,
+        role=user.role
     )
     if db.query(model.User).filter(model.User.username == user.username).first():
         raise HTTPException(status_code=401, detail="Username already exists")
     if db.query(model.User).filter(model.User.email == user.email).first():
         raise HTTPException(status_code=401, detail="Email already exists")
-    if db.query(model.User).filter(model.User.password < 8).first():
+    if len(user.password) < 8:
         raise HTTPException(status_code=401, detail="Password must be greater than 8 characters")
     db.add(new_user)
     db.commit()
