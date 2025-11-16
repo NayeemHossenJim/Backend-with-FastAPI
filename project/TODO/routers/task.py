@@ -15,16 +15,20 @@ current_user_dependency = Annotated[dict, Depends(get_current_user)]
 
 # Root endpoint to fetch all tasks
 @router.get("/")
-async def root(db: db_dependency):
-    return db.query(model.ToDo).all()
+async def root(db: db_dependency, current_user: current_user_dependency):
+    if not current_user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    return db.query(model.ToDo).filter(model.ToDo.owner_id == current_user["id"]).all()
 
 #Endpoint to check speicific task by id
 @router.get("/{task_id}")
-async def get_task(task_id: int, db: db_dependency):
-    Todo = db.query(model.ToDo).filter(model.ToDo.id == task_id).first()
-    if Todo:
-        return Todo
-    return HTTPException(status_code=404, detail="Task not found")
+async def get_task(task_id: int, db: db_dependency, current_user: current_user_dependency):
+    if not current_user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    Todo = db.query(model.ToDo).filter(model.ToDo.id == task_id).filter(model.ToDo.owner_id == current_user["id"]).first()
+    if not Todo:
+        return HTTPException(status_code=404, detail="Task not found")
+    return Todo
 
 # Endpoint to create a new tasks
 @router.post("/")
@@ -46,7 +50,9 @@ async def create_task(new_task: schema.ToDoRequest, db: db_dependency, current_u
 # Endpoint to update an existing task
 @router.put("/{task_id}")
 async def update_task(task_id: int, updated_task: schema.ToDoRequest, db: db_dependency, current_user: current_user_dependency):
-    Todo = db.query(model.ToDo).filter(model.ToDo.id == task_id).first()
+    if not current_user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    Todo = db.query(model.ToDo).filter(model.ToDo.id == task_id).filter(model.ToDo.owner_id == current_user["id"]).first()
     if not Todo:
         raise HTTPException(status_code=404, detail="Task not found")
     Todo.task = updated_task.task
@@ -60,8 +66,10 @@ async def update_task(task_id: int, updated_task: schema.ToDoRequest, db: db_dep
 
 # Endpoint to delete a task
 @router.delete("/{task_id}")
-async def delete_task(task_id: int, db: db_dependency):
-    Todo = db.query(model.ToDo).filter(model.ToDo.id == task_id).first()
+async def delete_task(task_id: int, db: db_dependency, current_user: current_user_dependency):
+    if not current_user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    Todo = db.query(model.ToDo).filter(model.ToDo.id == task_id).filter(model.ToDo.owner_id == current_user["id"]).first()
     if not Todo:
         raise HTTPException(status_code=404, detail="Task not found")
     db.delete(Todo)
