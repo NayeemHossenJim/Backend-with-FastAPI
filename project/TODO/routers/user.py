@@ -17,7 +17,8 @@ ALGORITHM = os.getenv("ALGORITHM")
 
 # Initialize APIRouter
 router = APIRouter(
-    prefix="/users"
+    prefix="/users",
+    tags=["users"]
 )
 db_dependency = Annotated[Session, Depends(get_db)]
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl="users/token")

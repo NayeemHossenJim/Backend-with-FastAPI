@@ -8,7 +8,8 @@ from fastapi import Depends, HTTPException, APIRouter
 
 # Initialize APIRouter
 router = APIRouter(
-    prefix="/tasks"
+    prefix="/tasks",
+    tags=["tasks"]
 )
 db_dependency = Annotated[Session, Depends(get_db)]
 current_user_dependency = Annotated[dict, Depends(get_current_user)]
