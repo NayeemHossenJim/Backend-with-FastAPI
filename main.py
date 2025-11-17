@@ -1,8 +1,9 @@
 # Essential imports
+from database import Base, engine
 from fastapi import FastAPI, Request
 from routers import task, user, admin
 from fastapi.templating import Jinja2Templates
-from database import Base, engine
+from fastapi.staticfiles import StaticFiles
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -10,6 +11,7 @@ app = FastAPI()
 # Create database tables and templates directory
 Base.metadata.create_all(bind=engine)
 templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
 def test(request: Request):
