@@ -14,45 +14,22 @@ router = APIRouter(
 db_dependency = Annotated[Session, Depends(get_db)]
 current_user_dependency = Annotated[dict, Depends(get_current_user)]
 
-def _to_todo_response(todo: model.ToDo):
-    return {
-        "id": todo.id,
-        "task": todo.task,
-        "description": todo.description,
-        "priority": todo.priority,
-        "complete": todo.status,
-        "owner_id": todo.owner_id,
-    }
-
-# Root endpoint to fetch a task (as expected by tests)
+# Root endpoint to fetch all tasks
 @router.get("/")
 async def root(db: db_dependency, current_user: current_user_dependency):
     if not current_user:
         raise HTTPException(status_code=401, detail="Unauthorized")
-    todo = (
-        db.query(model.ToDo)
-        .filter(model.ToDo.owner_id == current_user["id"])
-        .order_by(model.ToDo.id.asc())
-        .first()
-    )
-    if not todo:
-        raise HTTPException(status_code=404, detail="No tasks found")
-    return _to_todo_response(todo)
+    return db.query(model.ToDo).filter(model.ToDo.owner_id == current_user["id"]).all()
 
 #Endpoint to check speicific task by id
 @router.get("/{task_id}")
 async def get_task(task_id: int, db: db_dependency, current_user: current_user_dependency):
     if not current_user:
         raise HTTPException(status_code=401, detail="Unauthorized")
-    Todo = (
-        db.query(model.ToDo)
-        .filter(model.ToDo.id == task_id)
-        .filter(model.ToDo.owner_id == current_user["id"])
-        .first()
-    )
+    Todo = db.query(model.ToDo).filter(model.ToDo.id == task_id).filter(model.ToDo.owner_id == current_user["id"]).first()
     if not Todo:
-        raise HTTPException(status_code=404, detail="Task not found")
-    return _to_todo_response(Todo)
+        return HTTPException(status_code=404, detail="Task not found")
+    return Todo
 
 # Endpoint to create a new tasks
 @router.post("/")
