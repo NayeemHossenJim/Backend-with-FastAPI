@@ -93,3 +93,7 @@ def test_read_todo_by_id(tasks):
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {'complete': False,'task':'Test Todo',"id": 1, 'description': 'This is a test todo', "owner_id" : 1, "priority": 5}
 
+def test_read_todo_not_found():
+    response = client.get("/tasks/999")
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.json() == {"detail": "Task not found"}
