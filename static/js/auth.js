@@ -192,14 +192,28 @@ function validateField(e) {
 function showFieldError(inputGroup, message) {
     clearFieldError(inputGroup);
     
-    inputGroup.style.borderColor = 'var(--danger-color)';
+    const input = inputGroup.querySelector('input');
+    if (input) {
+        input.style.borderColor = 'var(--danger-color)';
+        input.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
+    }
     
     const errorElement = document.createElement('div');
     errorElement.className = 'field-error';
     errorElement.textContent = message;
-    errorElement.style.color = 'var(--danger-color)';
-    errorElement.style.fontSize = '0.75rem';
-    errorElement.style.marginTop = '0.25rem';
+    errorElement.style.cssText = `
+        color: var(--danger-color);
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    `;
+    
+    // Add error icon
+    const errorIcon = document.createElement('i');
+    errorIcon.className = 'fas fa-exclamation-circle';
+    errorElement.insertBefore(errorIcon, errorElement.firstChild);
     
     inputGroup.parentNode.appendChild(errorElement);
 }
@@ -216,7 +230,8 @@ function clearFieldError(inputOrGroup) {
     
     const input = inputGroup.querySelector('input');
     if (input) {
-        inputGroup.style.borderColor = '';
+        input.style.borderColor = '';
+        input.style.boxShadow = '';
     }
 }
 
@@ -243,6 +258,7 @@ function initializePasswordToggle() {
 // Initialize password strength indicator
 function initializePasswordStrength() {
     const passwordInput = document.getElementById('password');
+    const strengthContainer = document.querySelector('.password-strength');
     const strengthBar = document.querySelector('.strength-bar');
     const strengthFill = document.querySelector('.strength-fill');
     const strengthText = document.querySelector('.strength-text');
@@ -253,8 +269,19 @@ function initializePasswordStrength() {
         const password = this.value;
         const strength = calculatePasswordStrength(password);
         
+        if (password.length > 0) {
+            strengthContainer.classList.add('visible');
+        } else {
+            strengthContainer.classList.remove('visible');
+        }
+        
         updatePasswordStrength(strength, strengthFill, strengthText, strengthBar);
     });
+    
+    // Hide strength indicator initially
+    if (strengthContainer && !passwordInput.value) {
+        strengthContainer.classList.remove('visible');
+    }
 }
 
 // Calculate password strength
@@ -374,31 +401,3 @@ window.togglePassword = function() {
         }
     });
 };
-
-// Add form enhancement styles
-const style = document.createElement('style');
-style.textContent = `
-    .field-error {
-        animation: slideInError 0.3s ease-out;
-    }
-    
-    @keyframes slideInError {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    .input-group {
-        transition: all 0.2s ease;
-    }
-    
-    .input-group:focus-within {
-        transform: scale(1.02);
-    }
-`;
-document.head.appendChild(style);
