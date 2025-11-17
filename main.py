@@ -6,7 +6,10 @@ from database import Base, engine
 # Initialize FastAPI app
 app = FastAPI()
 
-Base.metadata.create_all(bind=engine)
+# Health check endpoint
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}
 
 # Include routers
 app.include_router(task.router)
