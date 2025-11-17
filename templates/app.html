@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow - Your Personal Task Manager</title>
+    <link rel="stylesheet" href="/static/css/app.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-content">
+            <div class="loading-logo">
+                <i class="fas fa-check-circle"></i>
+                <span>TaskFlow</span>
+            </div>
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+            </div>
+            <p>Loading your workspace...</p>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div class="app-container" id="appContainer">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <i class="fas fa-check-circle"></i>
+                    <span>TaskFlow</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <!-- User Profile -->
+            <div class="user-profile" id="userProfile">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="profile-info">
+                    <div class="profile-name">Guest User</div>
+                    <div class="profile-role">Free Plan</div>
+                </div>
+                <div class="profile-menu">
+                    <button class="profile-menu-btn">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item active">
+                        <a href="#" class="nav-link" data-section="dashboard">
+                            <i class="fas fa-th-large"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="tasks">
+                            <i class="fas fa-tasks"></i>
+                            <span>All Tasks</span>
+                            <span class="task-count" id="allTasksCount">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="today">
+                            <i class="fas fa-calendar-day"></i>
+                            <span>Today</span>
+                            <span class="task-count" id="todayTasksCount">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="important">
+                            <i class="fas fa-star"></i>
+                            <span>Important</span>
+                            <span class="task-count" id="importantTasksCount">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="completed">
+                            <i class="fas fa-check"></i>
+                            <span>Completed</span>
+                            <span class="task-count" id="completedTasksCount">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+                <h3>Quick Stats</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalTasks">0</div>
+                        <div class="stat-label">Total Tasks</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="completedPercentage">0%</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Auth Actions -->
+            <div class="auth-actions" id="authActions">
+                <button class="btn btn-outline" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Sign In
+                </button>
+                <button class="btn btn-primary" id="registerBtn">
+                    <i class="fas fa-user-plus"></i>
+                    Sign Up
+                </button>
+            </div>
+
+            <!-- Logout Action -->
+            <div class="logout-action" id="logoutAction" style="display: none;">
+                <button class="btn btn-outline" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="app-header">
+                <div class="header-left">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                </div>
+                
+                <div class="header-right">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search tasks..." id="searchInput">
+                    </div>
+                    
+                    <button class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    
+                    <div class="theme-toggle">
+                        <button id="themeToggle">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Dashboard Section -->
+                <section class="content-section active" id="dashboard">
+                    <div class="dashboard-header">
+                        <div class="welcome-message">
+                            <h2>Welcome back! 👋</h2>
+                            <p>Here's what's happening with your tasks today.</p>
+                        </div>
+                        <button class="btn btn-primary" id="addTaskBtn">
+                            <i class="fas fa-plus"></i>
+                            Add Task
+                        </button>
+                    </div>
+
+                    <!-- Dashboard Stats -->
+                    <div class="dashboard-stats">
+                        <div class="stat-card stat-primary">
+                            <div class="stat-icon">
+                                <i class="fas fa-list"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="dashTotalTasks">0</div>
+                                <div class="stat-text">Total Tasks</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card stat-success">
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="dashCompletedTasks">0</div>
+                                <div class="stat-text">Completed</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card stat-warning">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="dashPendingTasks">0</div>
+                                <div class="stat-text">Pending</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card stat-info">
+                            <div class="stat-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="dashImportantTasks">0</div>
+                                <div class="stat-text">Important</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Tasks -->
+                    <div class="dashboard-section">
+                        <h3>Recent Tasks</h3>
+                        <div class="recent-tasks" id="recentTasksList">
+                            <!-- Tasks will be dynamically loaded here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- All Tasks Section -->
+                <section class="content-section" id="tasks">
+                    <div class="section-header">
+                        <h2>All Tasks</h2>
+                        <div class="section-actions">
+                            <div class="filter-dropdown">
+                                <button class="dropdown-toggle">
+                                    <i class="fas fa-filter"></i>
+                                    Filter
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a href="#" data-filter="all">All Tasks</a>
+                                    <a href="#" data-filter="pending">Pending</a>
+                                    <a href="#" data-filter="completed">Completed</a>
+                                    <a href="#" data-filter="high">High Priority</a>
+                                    <a href="#" data-filter="medium">Medium Priority</a>
+                                    <a href="#" data-filter="low">Low Priority</a>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" id="addTaskBtnMain">
+                                <i class="fas fa-plus"></i>
+                                Add Task
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="tasks-container">
+                        <div class="tasks-list" id="tasksListContainer">
+                            <!-- Tasks will be dynamically loaded here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Today Tasks Section -->
+                <section class="content-section" id="today">
+                    <div class="section-header">
+                        <h2>Today's Tasks</h2>
+                        <button class="btn btn-primary" id="addTodayTaskBtn">
+                            <i class="fas fa-plus"></i>
+                            Add Task
+                        </button>
+                    </div>
+                    
+                    <div class="tasks-container">
+                        <div class="tasks-list" id="todayTasksList">
+                            <!-- Today's tasks will be dynamically loaded here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Important Tasks Section -->
+                <section class="content-section" id="important">
+                    <div class="section-header">
+                        <h2>Important Tasks</h2>
+                        <button class="btn btn-primary" id="addImportantTaskBtn">
+                            <i class="fas fa-plus"></i>
+                            Add Task
+                        </button>
+                    </div>
+                    
+                    <div class="tasks-container">
+                        <div class="tasks-list" id="importantTasksList">
+                            <!-- Important tasks will be dynamically loaded here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Completed Tasks Section -->
+                <section class="content-section" id="completed">
+                    <div class="section-header">
+                        <h2>Completed Tasks</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-outline" id="clearCompletedBtn">
+                                <i class="fas fa-trash"></i>
+                                Clear All
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="tasks-container">
+                        <div class="tasks-list" id="completedTasksList">
+                            <!-- Completed tasks will be dynamically loaded here -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Task Modal -->
+    <div class="modal-overlay" id="taskModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Task</h3>
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form class="modal-form" id="taskForm">
+                <input type="hidden" id="taskId">
+                
+                <div class="form-group">
+                    <label for="taskTitle">Task Title</label>
+                    <input type="text" id="taskTitle" name="task" required placeholder="Enter task title...">
+                </div>
+                
+                <div class="form-group">
+                    <label for="taskDescription">Description</label>
+                    <textarea id="taskDescription" name="description" rows="3" placeholder="Enter task description..."></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="taskPriority">Priority</label>
+                        <select id="taskPriority" name="priority">
+                            <option value="1">Low Priority</option>
+                            <option value="2">Medium Priority</option>
+                            <option value="3">High Priority</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="taskStatus">Status</label>
+                        <select id="taskStatus" name="status">
+                            <option value="false">Pending</option>
+                            <option value="true">Completed</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="saveBtn">
+                        <span class="btn-text">Save Task</span>
+                        <div class="btn-loader">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </div>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h3 id="confirmTitle">Confirm Action</h3>
+                <button class="modal-close" id="confirmModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-content">
+                <p id="confirmMessage">Are you sure you want to perform this action?</p>
+            </div>
+            
+            <div class="modal-actions">
+                <button type="button" class="btn btn-outline" id="confirmCancel">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmAction">
+                    <span class="btn-text">Confirm</span>
+                    <div class="btn-loader">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

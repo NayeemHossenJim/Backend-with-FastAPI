@@ -1,25 +1,35 @@
 
-body {
+/* Legacy styles - kept for backward compatibility */
+body.legacy {
   background: #fafafa;
   color: #33333a;
   padding-top: 70px;
 }
 
-h1, h2, h3, h4, h5, h6 {
+body.legacy h1, 
+body.legacy h2, 
+body.legacy h3, 
+body.legacy h4, 
+body.legacy h5, 
+body.legacy h6 {
   color: #323232;
 }
 
 .main-color {
-  background-color: #0e76a8 ;
+  background-color: #0e76a8;
 }
 
 .strike-through-td {
     text-decoration: line-through;
 }
 
-/* h1 {
-  color: red;
-} */
+/* Modern overrides */
+body:not(.legacy) {
+  background: var(--bg-secondary, #f9fafb);
+  color: var(--text-primary, #1f2937);
+  margin: 0;
+  padding: 0;
+}
 
 
 
