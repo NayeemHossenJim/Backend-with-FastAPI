@@ -829,11 +829,8 @@ MIT License - Free to use, modify, and distribute
 ### **🌟 Created by Nayeem Hossen Jim**
 
 [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/NayeemHossenJim)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/nayeemhossenjim)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/nayeem-hossen-jim)
 [![Portfolio](https://img.shields.io/badge/Portfolio-FF5722?style=for-the-badge&logo=web&logoColor=white)](https://nayeemhossenjim.github.io)
-
-**Full-Stack Developer | Python Enthusiast | Open Source Contributor**
-
 </div>
 
 ### 🙏 **Acknowledgments**
@@ -856,10 +853,5 @@ MIT License - Free to use, modify, and distribute
 ### 🚀 **Ready to build amazing things with TaskFlow?**
 
 **[⭐ Star this repository](https://github.com/NayeemHossenJim/Backend-with-FastAPI)** if you found it helpful!
-
-**[🔗 Try the Live Demo](https://render.com)** • **[📚 Read the Docs](http://localhost:8000/docs)** • **[🐛 Report Issues](https://github.com/NayeemHossenJim/Backend-with-FastAPI/issues)**
-
----
-*Built with ❤️ using FastAPI and modern Python development practices*
 
 </div>
