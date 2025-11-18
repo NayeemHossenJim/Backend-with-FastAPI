@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🌟 TaskFlow - Modern Todo Management System
+# 🌟 SVDFlow - Modern Todo Management System
 
 <img src="https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png" alt="FastAPI" width="300"/>
 
